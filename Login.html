@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Profile - Vedanta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #050508;
+      color: #FFFFFF;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 40%, rgba(212,175,55,0.1), transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+      background: rgba(5,5,8,0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFF8E7, #D4AF37, #FF8C00);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .back-btn {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: #D4AF37;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Main Container */
+    .profile-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* Animated Logo */
+    .animated-logo {
+      text-align: center;
+      margin-bottom: 30px;
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    @keyframes logoFloat {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+    }
+    .logo-glow {
+      font-size: 42px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFF8E7, #D4AF37, #F5D742, #FF8C00);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradientShift 3s linear infinite;
+      display: inline-block;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .logo-sub {
+      font-size: 12px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    /* Card Style */
+    .card {
+      background: rgba(15,15,22,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 32px;
+      padding: 28px 24px;
+      border: 1px solid rgba(212,175,55,0.2);
+      margin-bottom: 20px;
+    }
+
+    /* Login Form */
+    .login-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .login-subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+
+    .phone-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .phone-input-group input {
+      flex: 1;
+      padding: 16px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 20px;
+      color: white;
+      font-size: 16px;
+      font-family: inherit;
+    }
+    .phone-input-group input:focus {
+      outline: none;
+      border-color: #D4AF37;
+    }
+    .send-otp-btn {
+      background: linear-gradient(135deg, #D4AF37, #FF8C00);
+      border: none;
+      padding: 0 24px;
+      border-radius: 20px;
+      font-weight: 700;
+      color: #050508;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .otp-group {
+      margin-bottom: 20px;
+      display: none;
+    }
+    .otp-group.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .otp-input {
+      width: 100%;
+      padding: 16px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 20px;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 4px;
+      font-weight: 600;
+    }
+    .verify-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #D4AF37, #FF8C00);
+      border: none;
+      padding: 16px;
+      border-radius: 30px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #050508;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .resend-otp {
+      text-align: center;
+      margin-top: 12px;
+    }
+    .resend-otp button {
+      background: none;
+      border: none;
+      color: #D4AF37;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Benefits Section */
+    .benefits-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .benefits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 20px;
+    }
+    .benefit-item i {
+      font-size: 24px;
+      color: #D4AF37;
+    }
+    .benefit-item div h4 {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .benefit-item div p {
+      font-size: 11px;
+      color: #888;
+    }
+
+    /* Profile Section (After Login) */
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .profile-avatar {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #D4AF37, #FF8C00);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-avatar i {
+      font-size: 36px;
+      color: #050508;
+    }
+    .profile-info h3 {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .profile-info p {
+      font-size: 13px;
+      color: #888;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(0,0,0,0.3);
+      padding: 14px;
+      border-radius: 20px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 22px;
+      font-weight: 800;
+      color: #D4AF37;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: #888;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+    }
+    .menu-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .menu-left i {
+      font-size: 20px;
+      color: #D4AF37;
+    }
+    .logout-btn {
+      width: 100%;
+      background: rgba(244,67,54,0.15);
+      border: 1px solid rgba(244,67,54,0.3);
+      padding: 14px;
+      border-radius: 30px;
+      font-weight: 600;
+      color: #F44336;
+      cursor: pointer;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #D4AF37;
+      color: #050508;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: bold;
+      z-index: 10000;
+      font-size: 12px;
+      display: none;
+    }
+    .toast.show {
+      display: block;
+      animation: fadeInOut 2s ease;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(20px);
+      border-radius: 60px;
+      padding: 8px 20px;
+      display: flex;
+      gap: 30px;
+      z-index: 1000;
+      border: 1px solid rgba(212,175,55,0.5);
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 5px 14px;
+      border-radius: 50px;
+    }
+    .nav-item i { font-size: 20px; color: #ccc; }
+    .nav-item span { font-size: 10px; }
+    .nav-item.active, .nav-item:hover { background: rgba(212,175,55,0.2); }
+    .nav-item.active i, .nav-item.active span { color: #D4AF37; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <h1>VEDANTA</h1>
+  </div>
+  <div class="back-btn" onclick="window.location.href='index.html'">
+    <i class="fas fa-arrow-left"></i> Back
+  </div>
+</div>
+
+<div class="profile-container" id="profileContainer">
+  <!-- Dynamic content will be injected -->
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>HOME</span></div>
+  <div class="nav-item" onclick="window.location.href='bookings.html'"><i class="fas fa-calendar-alt"></i><span>BOOKING</span></div>
+  <div class="nav-item active" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // Check if user is logged in
+  let currentUser = JSON.parse(localStorage.getItem('vedantaUser')) || null;
+  let generatedOtp = null;
+  let otpExpiry = null;
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Generate random OTP
+  function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  // Send OTP (simulated)
+  function sendOTP(phone) {
+    generatedOtp = generateOTP();
+    otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes expiry
+    showToast(`📱 OTP sent to ${phone}: ${generatedOtp}`);
+    console.log(`OTP for ${phone}: ${generatedOtp}`);
+    return true;
+  }
+
+  // Verify OTP
+  function verifyOTP(enteredOtp) {
+    if (!generatedOtp || Date.now() > otpExpiry) {
+      showToast('❌ OTP expired. Please request again.');
+      return false;
+    }
+    if (enteredOtp === generatedOtp) {
+      return true;
+    }
+    showToast('❌ Invalid OTP. Please try again.');
+    return false;
+  }
+
+  // Render Login Page
+  function renderLoginPage() {
+    const container = document.getElementById('profileContainer');
+    container.innerHTML = `
+      <div class="animated-logo">
+        <div class="logo-glow">VEDANTA</div>
+        <div class="logo-sub">✦ WHERE SOUL MEETS LUXURY ✦</div>
+      </div>
+
+      <div class="card">
+        <div class="login-title">Welcome To Vedanta!</div>
+        <div class="login-subtitle">Login to access your account & exclusive benefits</div>
+
+        <div class="phone-input-group">
+          <input type="tel" id="phoneInput" placeholder="Enter 10-digit mobile number" maxlength="10">
+          <button class="send-otp-btn" id="sendOtpBtn">Send OTP</button>
+        </div>
+
+        <div class="otp-group" id="otpGroup">
+          <input type="text" id="otpInput" class="otp-input" placeholder="Enter 6-digit OTP" maxlength="6">
+          <button class="verify-btn" id="verifyBtn">Verify & Login</button>
+          <div class="resend-otp">
+            <button id="resendOtpBtn">Resend OTP</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="benefits-title">
+          <i class="fas fa-crown"></i> Membership Benefits
+        </div>
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <i class="fas fa-tags"></i>
+            <div><h4>Exclusive Discounts</h4><p>Get 10% off on your first order + special member prices</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-truck-fast"></i>
+            <div><h4>Free Priority Shipping</h4><p>Free express shipping on all orders above ₹2999</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-gift"></i>
+            <div><h4>Birthday Surprise</h4><p>Special gift & discount on your birthday month</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-star"></i>
+            <div><h4>Early Access</h4><p>Get early access to new collections & sales</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-headset"></i>
+            <div><h4>Priority Support</h4><p>24/7 dedicated customer support</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-coins"></i>
+            <div><h4>Vedanta Coins</h4><p>Earn coins on every purchase, redeem on next order</p></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Get orders count for benefits
+    const orders = JSON.parse(localStorage.getItem('vedantaOrders')) || [];
+    const totalOrders = orders.length;
+
+    // Add event listeners
+    document.getElementById('sendOtpBtn')?.addEventListener('click', () => {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!phone || !/^\d{10}$/.test(phone)) {
+        showToast('❌ Please enter a valid 10-digit mobile number');
+        return;
+      }
+      if (sendOTP(phone)) {
+        document.getElementById('otpGroup').classList.add('show');
+        showToast(`📱 OTP sent to ${phone}`);
+      }
+    });
+
+    document.getElementById('verifyBtn')?.addEventListener('click', () => {
+      const otp = document.getElementById('otpInput').value.trim();
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!otp) {
+        showToast('❌ Please enter OTP');
+        return;
+      }
+      if (verifyOTP(otp)) {
+        const user = {
+          phone: phone,
+          name: phone,
+          joinDate: new Date().toISOString(),
+          ordersCount: totalOrders
+        };
+        localStorage.setItem('vedantaUser', JSON.stringify(user));
+        currentUser = user;
+        showToast('✅ Login successful! Welcome to Vedanta family!');
+        renderProfilePage();
+      }
+    });
+
+    document.getElementById('resendOtpBtn')?.addEventListener('click', () => {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!phone || !/^\d{10}$/.test(phone)) {
+        showToast('❌ Please enter valid phone number first');
+        return;
+      }
+      sendOTP(phone);
+      showToast(`📱 New OTP sent to ${phone}`);
+    });
+  }
+
+  // Render Profile Page (After Login)
+  function renderProfilePage() {
+    const container = document.getElementById('profileContainer');
+    const orders = JSON.parse(localStorage.getItem('vedantaOrders')) || [];
+    const userOrders = orders.filter(o => o.customer?.phone === currentUser.phone);
+    const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
+    const pendingOrders = userOrders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled').length;
+
+    container.innerHTML = `
+      <div class="card">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="profile-info">
+            <h3>${currentUser.name || 'Valued Customer'}</h3>
+            <p><i class="fas fa-phone"></i> +91 ${currentUser.phone}</p>
+            <p><i class="fas fa-calendar"></i> Member since ${new Date(currentUser.joinDate).toLocaleDateString('en-IN')}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">${userOrders.length}</div>
+            <div class="stat-label">Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${pendingOrders}</div>
+            <div class="stat-label">Active Orders</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${Math.floor(totalSpent / 100)}</div>
+            <div class="stat-label">Vedanta Coins</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="benefits-title">
+          <i class="fas fa-gem"></i> Member Benefits
+        </div>
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <i class="fas fa-tags"></i>
+            <div><h4>10% OFF on Next Order</h4><p>Use code: WELCOME10</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-truck-fast"></i>
+            <div><h4>Free Express Shipping</h4><p>On all orders above ₹2999</p></div>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-coins"></i>
+            <div><h4>Vedanta Coins</h4><p>${Math.floor(totalSpent / 100)} coins earned (1 coin = ₹1)</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="menu-item" onclick="window.location.href='bookings.html'">
+          <div class="menu-left"><i class="fas fa-box"></i><span>My Orders</span></div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="menu-item" onclick="showToast('📍 Address book coming soon')">
+          <div class="menu-left"><i class="fas fa-map-marker-alt"></i><span>Saved Addresses</span></div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="menu-item" onclick="showToast('💳 Payment methods coming soon')">
+          <div class="menu-left"><i class="fas fa-credit-card"></i><span>Payment Methods</span></div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <div class="menu-item" onclick="showToast('🔔 Notification preferences coming soon')">
+          <div class="menu-left"><i class="fas fa-bell"></i><span>Notifications</span></div>
+          <i class="fas fa-chevron-right"></i>
+        </div>
+        <button class="logout-btn" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    `;
+
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+      localStorage.removeItem('vedantaUser');
+      currentUser = null;
+      showToast('👋 Logged out successfully');
+      renderLoginPage();
+    });
+  }
+
+  // Check login status on page load
+  if (currentUser) {
+    renderProfilePage();
+  } else {
+    renderLoginPage();
+  }
+</script>
+</body>
+</html>

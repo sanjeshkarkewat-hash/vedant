@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>My Bookings - Vedanta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: #050508;
+      color: #FFFFFF;
+      overflow-x: hidden;
+      padding-bottom: 80px;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 40%, rgba(212,175,55,0.08), transparent 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid rgba(212,175,55,0.3);
+      background: rgba(5,5,8,0.95);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo h1 {
+      font-size: 22px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFF8E7, #D4AF37, #FF8C00);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .back-btn {
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: #D4AF37;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Page Title */
+    .page-title {
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .page-title h2 {
+      font-size: 28px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .page-title p {
+      color: #888;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    /* Orders Container */
+    .orders-container {
+      padding: 0 16px;
+      margin-bottom: 30px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeInUp 0.5s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .empty-state i {
+      font-size: 80px;
+      color: #D4AF37;
+      opacity: 0.4;
+      margin-bottom: 20px;
+    }
+    .empty-state h3 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .empty-state p {
+      color: #888;
+      margin-bottom: 25px;
+    }
+    .shop-now-btn {
+      background: linear-gradient(135deg, #D4AF37, #FF8C00);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      color: #050508;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Order Card - Animated */
+    .order-card {
+      background: rgba(15,15,22,0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(212,175,55,0.2);
+      animation: slideIn 0.4s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Order Header */
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .order-id {
+      font-size: 13px;
+      font-weight: 600;
+      color: #D4AF37;
+    }
+    .order-date {
+      font-size: 11px;
+      color: #888;
+    }
+    .order-status {
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-confirmed { background: rgba(33,150,243,0.2); color: #2196F3; }
+    .status-processing { background: rgba(255,152,0,0.2); color: #FF9800; }
+    .status-shipped { background: rgba(33,150,243,0.2); color: #2196F3; }
+    .status-delivered { background: rgba(76,175,80,0.2); color: #4CAF50; }
+    .status-cancelled { background: rgba(244,67,54,0.2); color: #F44336; }
+
+    /* Product Image */
+    .product-image {
+      width: 60px;
+      height: 60px;
+      background: #0E0E14;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-image i {
+      font-size: 35px;
+      color: #D4AF37;
+    }
+
+    /* Order Items */
+    .order-items {
+      padding: 16px;
+    }
+    .order-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .order-item:last-child {
+      border-bottom: none;
+    }
+    .item-info {
+      flex: 1;
+    }
+    .item-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .item-info p {
+      font-size: 11px;
+      color: #888;
+    }
+    .item-price {
+      text-align: right;
+      font-weight: 700;
+      color: #D4AF37;
+    }
+    .item-price .price {
+      font-size: 14px;
+    }
+    .item-price .qty {
+      font-size: 10px;
+      color: #888;
+    }
+
+    /* Order Total */
+    .order-total {
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .order-total span:last-child {
+      color: #D4AF37;
+      font-size: 16px;
+    }
+
+    /* Payment Info */
+    .payment-info {
+      padding: 12px 16px;
+      background: rgba(212,175,55,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cod-badge {
+      background: rgba(76,175,80,0.15);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 11px;
+      color: #4CAF50;
+    }
+    .prepaid-badge {
+      background: rgba(33,150,243,0.15);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 11px;
+      color: #2196F3;
+    }
+
+    /* Delivery Info */
+    .delivery-info {
+      padding: 16px;
+      background: rgba(212,175,55,0.05);
+      margin: 0 16px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .delivery-info i {
+      font-size: 24px;
+      color: #D4AF37;
+    }
+    .delivery-text {
+      flex: 1;
+    }
+    .delivery-text p {
+      font-size: 12px;
+      color: #CCCCCC;
+    }
+    .delivery-text strong {
+      color: #D4AF37;
+    }
+
+    /* Tracking Timeline */
+    .tracking-timeline {
+      padding: 16px;
+      margin: 0 16px 16px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 20px;
+    }
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #D4AF37;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timeline-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+    }
+    .timeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      z-index: 0;
+    }
+    .step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      flex: 1;
+    }
+    .step-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      transition: all 0.3s ease;
+    }
+    .step.active .step-icon {
+      background: #D4AF37;
+      color: #050508;
+      box-shadow: 0 0 15px rgba(212,175,55,0.5);
+      animation: pulse 0.5s ease;
+    }
+    .step.completed .step-icon {
+      background: #4CAF50;
+      color: white;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .step-label {
+      font-size: 10px;
+      color: #888;
+    }
+    .step.active .step-label {
+      color: #D4AF37;
+      font-weight: 600;
+    }
+
+    /* Action Buttons */
+    .order-actions {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .cancel-btn {
+      flex: 1;
+      background: rgba(244,67,54,0.15);
+      border: 1px solid rgba(244,67,54,0.3);
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 13px;
+      color: #F44336;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .cancel-btn:active { transform: scale(0.97); }
+    .support-btn {
+      flex: 1;
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.3);
+      padding: 10px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 13px;
+      color: #D4AF37;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s;
+    }
+    .support-btn:active { transform: scale(0.97); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #D4AF37;
+      color: #050508;
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: bold;
+      z-index: 10000;
+      font-size: 12px;
+      display: none;
+    }
+    .toast.show {
+      display: block;
+      animation: fadeInOut 2s ease;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+      15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(20px);
+      border-radius: 60px;
+      padding: 8px 20px;
+      display: flex;
+      gap: 30px;
+      z-index: 1000;
+      border: 1px solid rgba(212,175,55,0.5);
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      padding: 5px 14px;
+      border-radius: 50px;
+    }
+    .nav-item i { font-size: 20px; color: #ccc; }
+    .nav-item span { font-size: 10px; }
+    .nav-item.active, .nav-item:hover { background: rgba(212,175,55,0.2); }
+    .nav-item.active i, .nav-item.active span { color: #D4AF37; }
+    @media (min-width: 768px) {
+      .bottom-nav { bottom: 20px; padding: 12px 32px; gap: 50px; }
+      .nav-item { padding: 6px 20px; }
+      .nav-item i { font-size: 26px; }
+      .nav-item span { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <h1>VEDANTA</h1>
+  </div>
+  <div class="back-btn" onclick="window.location.href='index.html'">
+    <i class="fas fa-arrow-left"></i> Back
+  </div>
+</div>
+
+<div class="page-title">
+  <h2><i class="fas fa-calendar-alt"></i> My Bookings</h2>
+  <p>Track your orders and view order history</p>
+</div>
+
+<div class="orders-container" id="ordersContainer">
+  <!-- Orders will be injected here -->
+</div>
+
+<!-- Bottom Navigation - PROFILE BUTTON NOW LINKS TO profile.html -->
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>HOME</span></div>
+  <div class="nav-item active" onclick="window.location.href='bookings.html'"><i class="fas fa-calendar-alt"></i><span>BOOKING</span></div>
+  <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // Product Icons Database
+  const productIcons = {
+    1: "fa-female",
+    2: "fa-male", 
+    3: "fa-female",
+    4: "fa-tshirt",
+    5: "fa-shopping-bag",
+    6: "fa-dress",
+    7: "fa-child",
+    8: "fa-female",
+    9: "fa-shoe-prints",
+    10: "fa-gem",
+    11: "fa-gem",
+    12: "fa-hands-praying",
+    13: "fa-fire",
+    14: "fa-book",
+    15: "fa-candle-holder",
+    16: "fa-om",
+    17: "fa-male",
+    18: "fa-female",
+    19: "fa-tshirt",
+    20: "fa-gem",
+    21: "fa-tshirt",
+    22: "fa-female",
+    23: "fa-home",
+    24: "fa-music"
+  };
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Get orders from localStorage
+  let orders = JSON.parse(localStorage.getItem('vedantaOrders')) || [];
+
+  function getStatusInfo(status) {
+    const statuses = {
+      'confirmed': { label: 'Confirmed', class: 'status-confirmed', icon: 'fa-check-circle', step: 0 },
+      'processing': { label: 'Processing', class: 'status-processing', icon: 'fa-spinner fa-pulse', step: 1 },
+      'shipped': { label: 'Shipped', class: 'status-shipped', icon: 'fa-truck', step: 2 },
+      'delivered': { label: 'Delivered', class: 'status-delivered', icon: 'fa-check-double', step: 3 },
+      'cancelled': { label: 'Cancelled', class: 'status-cancelled', icon: 'fa-times-circle', step: -1 }
+    };
+    return statuses[status] || statuses['processing'];
+  }
+
+  function getEstimatedDelivery(orderDate, status) {
+    if (status === 'delivered') return 'Delivered on ' + new Date(Date.now()).toLocaleDateString('en-IN');
+    if (status === 'cancelled') return 'Order Cancelled';
+    
+    const date = new Date(orderDate);
+    if (status === 'shipped') {
+      date.setDate(date.getDate() + 3);
+      return `Expected by ${date.toLocaleDateString('en-IN')}`;
+    }
+    if (status === 'processing') {
+      date.setDate(date.getDate() + 5);
+      return `Expected by ${date.toLocaleDateString('en-IN')}`;
+    }
+    date.setDate(date.getDate() + 7);
+    return `Expected by ${date.toLocaleDateString('en-IN')}`;
+  }
+
+  function renderTimeline(currentStatus) {
+    const steps = [
+      { name: 'Order Placed', key: 'confirmed' },
+      { name: 'Processing', key: 'processing' },
+      { name: 'Shipped', key: 'shipped' },
+      { name: 'Delivered', key: 'delivered' }
+    ];
+    
+    let currentStep = -1;
+    if (currentStatus === 'confirmed') currentStep = 0;
+    else if (currentStatus === 'processing') currentStep = 1;
+    else if (currentStatus === 'shipped') currentStep = 2;
+    else if (currentStatus === 'delivered') currentStep = 3;
+    
+    return `
+      <div class="timeline-steps">
+        ${steps.map((step, idx) => `
+          <div class="step ${idx <= currentStep ? (idx === currentStep ? 'active' : 'completed') : ''}">
+            <div class="step-icon"><i class="fas ${idx <= currentStep ? (idx === currentStep ? 'fa-circle' : 'fa-check') : 'fa-clock'}"></i></div>
+            <div class="step-label">${step.name}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderOrders() {
+    const container = document.getElementById('ordersContainer');
+    if (!container) return;
+    
+    if (orders.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-box-open"></i>
+          <h3>No Orders Yet</h3>
+          <p>You haven't placed any orders yet.<br>Start shopping to see your bookings here!</p>
+          <button class="shop-now-btn" onclick="window.location.href='index.html'">
+            <i class="fas fa-shopping-cart"></i> Start Shopping
+          </button>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = '';
+    orders.forEach((order, index) => {
+      const statusInfo = getStatusInfo(order.status || 'processing');
+      const estimatedDelivery = getEstimatedDelivery(order.date, order.status || 'processing');
+      const isCOD = order.paymentMethod === 'Cash on Delivery';
+      
+      container.innerHTML += `
+        <div class="order-card" data-order-id="${order.orderId}">
+          <div class="order-header">
+            <div>
+              <div class="order-id">Order #${order.orderId}</div>
+              <div class="order-date">${order.date}</div>
+            </div>
+            <div class="order-status ${statusInfo.class}">
+              <i class="fas ${statusInfo.icon}"></i> ${statusInfo.label}
+            </div>
+          </div>
+          
+          <div class="order-items">
+            ${order.items.map(item => `
+              <div class="order-item">
+                <div class="product-image">
+                  <i class="fas ${productIcons[item.id] || 'fa-gem'}"></i>
+                </div>
+                <div class="item-info">
+                  <h4>${item.name}</h4>
+                  <p>Quantity: ${item.quantity}</p>
+                </div>
+                <div class="item-price">
+                  <div class="price">₹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
+                  <div class="qty">@ ₹${item.price.toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="payment-info">
+            <div class="payment-method">
+              <i class="fas ${isCOD ? 'fa-money-bill-wave' : 'fa-credit-card'}"></i>
+              <span>${order.paymentMethod}</span>
+            </div>
+            <div class="${isCOD ? 'cod-badge' : 'prepaid-badge'}">
+              <i class="fas ${isCOD ? 'fa-hand-holding-usd' : 'fa-check-circle'}"></i>
+              ${isCOD ? 'Pay on Delivery' : 'Prepaid'}
+            </div>
+          </div>
+          
+          <div class="order-total">
+            <span>Total Amount</span>
+            <span>₹${order.total.toLocaleString('en-IN')}</span>
+          </div>
+          
+          <div class="delivery-info">
+            <i class="fas fa-truck"></i>
+            <div class="delivery-text">
+              <p><strong>${estimatedDelivery}</strong></p>
+              <p>Tracking ID: ${order.trackingId || 'TRK' + order.orderId.slice(-8)}</p>
+              <p>Shipping to: ${order.customer?.address || 'Registered Address'}, ${order.customer?.city || ''}</p>
+            </div>
+          </div>
+          
+          <div class="tracking-timeline">
+            <div class="timeline-title"><i class="fas fa-chart-line"></i> Order Tracking</div>
+            ${renderTimeline(order.status || 'processing')}
+          </div>
+          
+          <div class="order-actions">
+            <button class="cancel-btn" onclick="cancelOrder('${order.orderId}')">
+              <i class="fas fa-times-circle"></i> Cancel Order
+            </button>
+            <button class="support-btn" onclick="contactSupport('${order.orderId}')">
+              <i class="fas fa-headset"></i> Get Support
+            </button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function cancelOrder(orderId) {
+    const orderIndex = orders.findIndex(o => o.orderId === orderId);
+    if (orderIndex !== -1 && orders[orderIndex].status !== 'delivered' && orders[orderIndex].status !== 'cancelled') {
+      orders[orderIndex].status = 'cancelled';
+      localStorage.setItem('vedantaOrders', JSON.stringify(orders));
+      renderOrders();
+      showToast(`✅ Order #${orderId} has been cancelled`);
+    } else if (orders[orderIndex]?.status === 'delivered') {
+      showToast('❌ Cannot cancel delivered orders. Please contact support.');
+    } else if (orders[orderIndex]?.status === 'cancelled') {
+      showToast('⚠️ Order already cancelled');
+    }
+  }
+
+  function contactSupport(orderId) {
+    showToast(`📞 Support team contacted for order #${orderId}. We'll reach you within 24 hours!`);
+  }
+
+  // Make functions global
+  window.cancelOrder = cancelOrder;
+  window.contactSupport = contactSupport;
+  window.showToast = showToast;
+
+  renderOrders();
+</script>
+</body>
+</html>
